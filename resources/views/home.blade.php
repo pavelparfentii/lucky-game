@@ -18,7 +18,7 @@
         <!-- Success Message -->
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle"></i> {{ session('success') }}
+                <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
 
                 @if(session('unique_token'))
                     <hr>
@@ -26,7 +26,7 @@
                     <div class="d-flex align-items-center">
                         <input type="text"
                                class="form-control form-control-sm me-2"
-                               value="{{ url('/game/' . session('unique_token')) }}"
+                               value="{{ session('link')}}"
                                readonly
                                id="uniqueLink">
                         <button class="btn btn-outline-success btn-sm"
@@ -44,10 +44,26 @@
             </div>
         @endif
 
-        <!-- Error Messages -->
+        <!-- Error Message -->
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <!-- Info Message -->
+        @if(session('info'))
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle me-2"></i> {{ session('info') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <!-- Validation Error Messages -->
         @if($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle"></i> <strong>Error!</strong>
+                <i class="bi bi-exclamation-triangle me-2"></i> <strong>Error!</strong>
                 <ul class="mb-0 mt-2">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -171,3 +187,4 @@ setTimeout(() => {
 }, 10000);
 </script>
 @endsection
+

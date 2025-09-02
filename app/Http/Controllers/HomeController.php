@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
+use App\Models\Link;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -10,8 +11,11 @@ use Illuminate\Support\Str;
 class HomeController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
+        // Check if there's an error message from token validation
+        $error = $request->session()->get('error');
+        
         return view('home');
     }
 
@@ -20,32 +24,28 @@ class HomeController extends Controller
      */
     public function register(UserRequest $request)
     {
-        // Валідація даних
-        $validated = $request->validate();
+
+        $validated = $request->validated();
 
         try {
-            // Створюємо користувача
-            $user = User::create([
-                'username' => $validated['username'],
-                'phone_number' => $validated['phone_number'],
-                'email' => null, // Email не потрібен для нашого завдання
-            ]);
 
-            // Генеруємо унікальний токен для посилання
-            $uniqueToken = $this->generateUniqueToken();
+            $user = User::create($validated);
 
-            // Тут буде логіка створення Link після створення відповідної моделі
-            // Поки що повертаємо success з токеном
+            // generate unique token
+            $uniqueToken = $this->generateUniqueToken($user);
+
+            $url = route('link.show', ['token' => $uniqueToken]);
 
             return redirect()->back()->with([
-                'success' => 'Реєстрація успішна! Ваше унікальне посилання створено.',
+                'success' => 'Success, your link is created',
                 'unique_token' => $uniqueToken,
+                'link' => $url,
                 'user_id' => $user->id
             ]);
 
         } catch (\Exception $e) {
             return redirect()->back()
-                ->withErrors(['error' => 'Сталася помилка під час реєстрації. Спробуйте ще раз.'])
+                ->withErrors(['error' => 'Error occurred. Try again later'])
                 ->withInput();
         }
     }
@@ -53,14 +53,14 @@ class HomeController extends Controller
     /**
      * Генерувати унікальний токен
      */
-    private function generateUniqueToken(): string
+    private function generateUniqueToken(User $user): string
     {
-        do {
-            $token = Str::random(32);
-            // Перевіряємо унікальність токена (поки що просто генеруємо)
-            // Після створення моделі UniqueLink тут буде перевірка в БД
-        } while (false); // Поки що завжди унікальний
+        $token = Str::random(32);
+        $link = $user->links()->create([
+            'token' => $token,
+            'expires_at' => now()->addDays(7),
+        ]);
 
-        return $token;
+        return $link->token;
     }
 }

@@ -37,4 +37,16 @@ class UserRequest extends FormRequest
             'phone_number.max' => 'phone number must be less than 20 characters',
         ];
     }
+
+    /**
+     * Custom validation handling
+     */
+    public function validate()
+    {
+        $instance = $this->getValidatorInstance();
+        if ($instance->fails()) {
+            $this->failedValidation($instance);
+        }
+        return $this->validated();
+    }
 }

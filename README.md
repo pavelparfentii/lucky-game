@@ -30,9 +30,14 @@ Simply run:
 docker-compose up -d
 ```
 
-*If needed:*
+*or in case permissions issue:*
 ```bash
 sudo docker-compose up -d
+```
+
+Add access
+```bash
+sudo chown -R www-data:www-data storage bootstrap/cache
 ```
 
 ### 3: Open browser
