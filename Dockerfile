@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libsqlite3-dev \
     sqlite3 \
-    && docker-php-ext-install pdo pdo_sqlite \
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_sqlite zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -34,9 +36,18 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/storage \
     && chmod -R 777 /var/www/html/bootstrap/cache
 
+# Copy project files
+COPY . /var/www/html
+
 # Copy startup script
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
+
+# Prepare app for first run
+RUN touch /var/www/html/database/database.sqlite \
+    && chmod -R 777 /var/www/html/database \
+    && chmod -R 777 /var/www/html/storage \
+    && chmod -R 777 /var/www/html/bootstrap/cache
 
 EXPOSE 9000
 

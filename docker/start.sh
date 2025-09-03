@@ -7,12 +7,15 @@ echo "Starting Laravel application..."
 echo "Setting proper permissions..."
 chmod -R 777 /var/www/html/storage
 chmod -R 777 /var/www/html/bootstrap/cache
-[ -d /var/www/html/database ] && chmod -R 777 /var/www/html/database
+chmod -R 777 /var/www/html/database
 
-# Install Composer dependencies if vendor directory doesn't exist
-if [ ! -d /var/www/html/vendor ]; then
+# Check vendor directory
+echo "Checking vendor directory..."
+if [ -z "$(ls -A /var/www/html/vendor 2>/dev/null)" ]; then
     echo "Installing Composer dependencies..."
-    composer install --no-interaction --no-progress
+    cd /var/www/html && composer install --no-interaction --no-progress --prefer-dist
+else
+    echo "Composer dependencies already installed"
 fi
 
 # Check if .env exists, if not copy from .env.example
@@ -36,13 +39,16 @@ if ! grep -q "APP_KEY=base64:" /var/www/html/.env; then
     php artisan key:generate --force
 fi
 
-# Clear caches and optimize
-echo "Clearing cache and optimizing..."
-php artisan optimize:clear
-
-# Run migrations
+# Run migrations first
 echo "Running database migrations..."
 php artisan migrate --force
+
+# Clear caches and optimize 
+echo "Clearing cache and optimizing..."
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+php artisan route:clear
 
 echo "Laravel application is ready!"
 

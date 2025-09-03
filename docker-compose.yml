@@ -4,21 +4,25 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: laravel_app_test
+        container_name: laravel_app_test_1
         volumes:
             - ./:/var/www/html:delegated
-            - ./vendor:/var/www/html/vendor:delegated
+            - vendor_volume:/var/www/html/vendor
             - ./storage:/var/www/html/storage:delegated
             - ./bootstrap/cache:/var/www/html/bootstrap/cache:delegated
+            - ./database/database.sqlite:/var/www/html/database/database.sqlite
         environment:
             - DB_CONNECTION=sqlite
             - DB_DATABASE=/var/www/html/database/database.sqlite
+            - APP_ENV=local
+            - APP_DEBUG=true
+            - APP_URL=http://localhost:8084
             - COMPOSER_ALLOW_SUPERUSER=1
         restart: unless-stopped
 
     nginx:
         image: nginx:alpine
-        container_name: laravel_nginx
+        container_name: laravel_nginx_1
         ports:
             - "8084:80"
         volumes:
@@ -27,3 +31,6 @@ services:
         depends_on:
             - app
         restart: unless-stopped
+
+volumes:
+    vendor_volume:
