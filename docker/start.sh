@@ -25,13 +25,16 @@ if [ ! -f /var/www/html/.env ]; then
     chmod 666 /var/www/html/.env
 fi
 
-# Ensure database file exists
-if [ ! -f /var/www/html/database/database.sqlite ]; then
-    echo "Creating SQLite database file..."
-    mkdir -p /var/www/html/database
-    touch /var/www/html/database/database.sqlite
-    chmod 777 /var/www/html/database/database.sqlite
-fi
+# Create separate database directory with proper permissions
+echo "Setting up database..."
+# Remove existing database directory and create a fresh one
+rm -rf /var/www/html/database/database.sqlite
+mkdir -p /var/www/html/database
+touch /var/www/html/database/database.sqlite
+chown -R www-data:www-data /var/www/html/database
+chmod -R 777 /var/www/html/database
+chmod 666 /var/www/html/database/database.sqlite
+ls -la /var/www/html/database/
 
 # Generate application key if not set
 if ! grep -q "APP_KEY=base64:" /var/www/html/.env; then
@@ -41,6 +44,9 @@ fi
 
 # Run migrations first
 echo "Running database migrations..."
+# Give a second for the file system to catch up
+sleep 2
+sqlite3 /var/www/html/database/database.sqlite ".tables" || echo "Testing SQLite connection failed"
 php artisan migrate --force
 
 # Clear caches and optimize 
