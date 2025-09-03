@@ -21,11 +21,12 @@
 
 ### 1: Clone project
 
-Clone project from the repo, cd to_test_proj
+git clone git@github.com:pavelparfentii/lucky-game.git
+cd lucky-game
 
 ### 2: Run Docker
 
-Simply run:
+run:
 ```bash
 docker-compose up -d
 ```
