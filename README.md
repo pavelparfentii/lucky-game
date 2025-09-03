@@ -19,30 +19,26 @@
 
 ## Installation
 
-### 1: Clone project
+### Run with single command
 
-git clone git@github.com:pavelparfentii/lucky-game.git
-cd lucky-game
-
-### 2: Run Docker
-
-run:
 ```bash
-docker-compose up -d
+./start.sh
 ```
 
-*or in case permissions issue:*
+This script will:
+1. Add your user ID and group ID to .env file
+2. Start Docker containers
+3. Run migrations and clear cache
+4. The application will be available at http://localhost:8084
+
+### Manual setup
+
+Start Docker containers:
 ```bash
-sudo docker-compose up -d
+docker compose up -d
 ```
 
-Add access
-```bash
-sudo chown -R www-data:www-data storage bootstrap/cache
-```
-
-### 3: Open browser
-Go to [http://localhost:8084](http://localhost:8084)
+Visit [http://localhost:8084](http://localhost:8084)
 
 ## Game rules
 
@@ -59,5 +55,5 @@ Go to [http://localhost:8084](http://localhost:8084)
 
 ### Install dependencies
 ```bash
-docker-compose exec app composer install
+docker compose exec app composer install
 ```
