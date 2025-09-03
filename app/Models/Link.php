@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +10,7 @@ class Link extends Model
 {
     protected $table = 'links';
     protected $fillable = [
+        'user_id',
         'token',
         'is_active',
         'expires_at',
@@ -36,7 +36,7 @@ class Link extends Model
     {
         $query = $query->where('is_active', true)
                        ->where('expires_at', '>=', now());
-                       
+
         if ($token) {
             $query->where('token', $token);
         }

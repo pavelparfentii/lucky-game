@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -31,11 +32,8 @@ class LinkController extends Controller
         $link->update(['is_active' => false]);
 
         try {
-            // Generate link
-            $newLink = $link->user->links()->create([
-                'token' => Str::random(32),
-                'expires_at' => now()->addDays(7),
-            ]);
+
+            $newLink = $link->user->generateLink();;
 
             return redirect()->route('link.show', ['token' => $newLink->token])
                 ->with('success', 'Your link has been successfully regenerated');

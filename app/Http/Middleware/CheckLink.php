@@ -18,16 +18,8 @@ class CheckLink
     {
         $token = $request->route('token');
 
-        // Check if token is provided in the route
-        if (!$token) {
-            return redirect()->route('home')
-                ->with('error', 'Link is missing or expired');
-        }
+        $link = $token ? Link::active($token)->first() : null;
 
-        // Find the link using the active scope (checks both active status and expiration date)
-        $link = Link::active($token)->first();
-
-        // If link doesn't exist, is inactive, or has expired
         if (!$link) {
             return redirect()->route('home')
                 ->with('error', 'Link is missing or expired');

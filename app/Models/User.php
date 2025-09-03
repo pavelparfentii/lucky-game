@@ -52,4 +52,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(Link::class);
     }
+
+    public function games(): HasMany
+    {
+        return $this->hasMany(Game::class);
+    }
+
+    public function generateLink(): Link
+    {
+        return $this->links()->create([
+            'token' => \Str::random(32),
+            'expires_at' => now()->addDays(7),
+        ]);
+    }
 }

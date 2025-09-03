@@ -6,12 +6,14 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <!-- Header -->
+                        <!-- Header -->
             <div class="text-center mb-4">
                 <h1 class="display-5 text-primary mb-3">
-                     Page A
+                    <i class="bi bi-link-45deg"></i> Lucky Game Link
                 </h1>
-
+                <p class="lead text-muted">
+                    Your unique game link is active
+                </p>
             </div>
 
             <!-- Success Message -->
@@ -70,9 +72,66 @@
                             </button>
                         </form>
                     </div>
+
+                    </div>
+                </div>
+
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0">
+                        <i class="bi bi-dice-5"></i> Lucky Game
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        @if(session('number'))
+                            <div class="alert alert-info mb-4">
+                                <h5 class="alert-heading mb-3">Результат гри</h5>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-dice-6 text-primary me-2 fs-5"></i>
+                                    <strong class="me-2">Число:</strong>
+                                    <span class="fs-5 fw-bold">{{ session('number') }}</span>
+                                </div>
+
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi {{ session('result') == 'Win' ? 'bi-trophy text-success' : 'bi-x-circle text-danger' }} me-2 fs-5"></i>
+                                    <strong class="me-2">Результат:</strong>
+                                    <span class="fs-5 fw-bold {{ session('result') == 'Win' ? 'text-success' : 'text-danger' }}">
+                                        {{ session('result') }}
+                                    </span>
+                                </div>
+
+                                @if(session('result') == 'Win')
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-cash-coin text-success me-2 fs-5"></i>
+                                        <strong class="me-2">Сума виграшу:</strong>
+                                        <span class="fs-5 fw-bold text-success">{{ number_format(session('amount'), 2) }}</span>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="text-center mb-4">
+                                <p class="mb-0">Нажми "Imfeelinglucky" щоб згенерувати рандомне число</p>
+
+                            </div>
+                        @endif
+
+                        <div class="d-flex flex-column flex-md-row gap-3 mt-4">
+                            <form method="POST" action="{{ route('link.play', $link->token) }}" class="flex-fill">
+                                @csrf
+                                <button type="submit" class="btn btn-success w-100">
+                                     Imfeelinglucky
+                                </button>
+                            </form>
+
+                            <a href="{{ route('link.history', $link->token) }}" class="btn btn-info w-100">
+                                 History
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

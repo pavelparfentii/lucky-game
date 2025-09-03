@@ -15,7 +15,7 @@ class HomeController extends Controller
     {
         // Check if there's an error message from token validation
         $error = $request->session()->get('error');
-        
+
         return view('home');
     }
 
@@ -55,11 +55,8 @@ class HomeController extends Controller
      */
     private function generateUniqueToken(User $user): string
     {
-        $token = Str::random(32);
-        $link = $user->links()->create([
-            'token' => $token,
-            'expires_at' => now()->addDays(7),
-        ]);
+
+        $link = $user->generateLink();
 
         return $link->token;
     }
